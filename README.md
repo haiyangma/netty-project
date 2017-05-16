@@ -10,17 +10,17 @@ import com.mhy.netty.http.HttpRequestKit;
 import com.mhy.netty.http.HttpResponseKit;
 import org.springframework.stereotype.Component;
 
-/**
-* Created by root on 16-8-22.
-*/
-@Component
-@RequestMapping("mhy/get")
-public class Test {
-    @RequestMapping
-    public String test(HttpRequestKit request, HttpResponseKit response){
-        return request.getParams().toString();
+    /**
+    * Created by root on 16-8-22.
+    */
+    @Component
+    @RequestMapping("mhy/get")
+    public class Test {
+        @RequestMapping
+        public String test(HttpRequestKit request, HttpResponseKit response){
+            return request.getParams().toString();
+        }
     }
-}
 then it will handle the request like this : http://10.13.89.31:56666/mhy/get/test?n=1&m=2
 
 Then create the server like this:
