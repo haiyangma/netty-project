@@ -10,3 +10,5 @@ dev/**/.gitignore
 **/catalina.base_IS_UNDEFINED/
 *.iml
 .idea/
+build/
+.gradle/
