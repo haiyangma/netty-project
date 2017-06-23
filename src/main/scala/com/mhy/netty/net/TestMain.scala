@@ -11,13 +11,11 @@ class TestMain {
 object TestMain{
   val logger = Logger(classOf[TestMain])
   def main(args: Array[String]) {
-//    val server = new HttpServer(55555,new HandlerProxy);
-//    println("start the server at 55555")
-//    server.start();
-    var n = 10
-    while(n>0){
-      n-=1;
-      logger.warn(s"testset ${n} !")
+
+    val pattern = """([0-9]{3})""".r
+    for(matching <- pattern.findAllIn("123123aaa 2323bbb")){
+      print(matching+"\n")
     }
+
   }
 }
