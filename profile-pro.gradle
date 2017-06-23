@@ -16,7 +16,7 @@ repositories{
 }
 
 ext{
-    scala_version = "2.12.2"
+    scala_version = "2.11.2"
     spark_version = "1.6.2"
     spring_version = "3.2.3.RELEASE"
 }
@@ -50,6 +50,10 @@ dependencies{
 //    compile "org.apache.spark:spark-streaming-kafka_2.10:$spark_version"
     testCompile "junit:junit:4.11"
 
+    compile group: 'com.typesafe.akka', name: 'akka-actor_2.11', version: '2.5.3'
+    compile group: 'com.typesafe.akka', name: 'akka-testkit_2.11', version: '2.5.3'
+    compile group: 'org.scalatest',name:'scalatest_2.11', version: '3.0.1'
+    compile group: 'org.scalactic', name: 'scalactic_2.11', version: '3.0.1'
 
 //    compile "org.json4s:json4s-native_2.10:3.2.10"
 //    compile "org.json4s:json4s-jackson_2.10:3.2.10"
