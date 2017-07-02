@@ -2,7 +2,8 @@ package com.mhy.akka.test
 
 import akka.actor.{ActorSystem, PoisonPill}
 import akka.testkit.{ImplicitSender, TestActors, TestKit, TestProbe}
-import com.mhy.akka.test.DeviceGroup.{ReplyDeviceList, RequestDeviceList}
+import com.mhy.akka.test.Device.ReadTemprature
+import com.mhy.akka.test.DeviceGroup.{ReplyDeviceList, RequestDeviceList, RespondAllTemperatures, Temperature}
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 
 import scala.concurrent.duration.DurationInt
@@ -94,6 +95,35 @@ class IotTest extends TestKit(ActorSystem("MySpec")) with ImplicitSender
       groupActor.tell(RequestDeviceList(requestId = 1),probe.ref)
       probe.expectMsg(ReplyDeviceList(requestId = 1,Set("device2")))
     }
+  }
+
+  "return temperature value for working devices" in {
+    val requester = TestProbe()
+
+    val device1 = TestProbe()
+    val device2 = TestProbe()
+
+    val queryActor = system.actorOf(DeviceGroupQuery.props(
+      actorToDeviceId = Map(device1.ref -> "device1",device2.ref -> "device2"),
+      requestId = 1,
+      requester = requester.ref,
+      timeout = 3.seconds
+    ))
+
+    device1.expectMsg(ReadTemprature(requestId = 0))
+    device2.expectMsg(ReadTemprature(requestId = 0))
+
+    queryActor.tell(RespondTemperature(requestId = 0,Some(1.0)),device1.ref)
+    queryActor.tell(RespondTemperature(requestId = 0,Some(2.0)),device2.ref)
+
+    requester.expectMsg(RespondAllTemperatures(
+      requestId = 1,
+      temperatures = Map(
+        "device1" -> Temperature(1.0),
+        "device2" -> Temperature(2.0)
+      )
+    ))
+
   }
 
 }

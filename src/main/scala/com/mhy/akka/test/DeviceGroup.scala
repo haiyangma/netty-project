@@ -1,7 +1,9 @@
 package com.mhy.akka.test
 
 import akka.actor.{Actor, ActorLogging, ActorRef, ActorSystem, Props, Terminated}
-import com.mhy.akka.test.DeviceGroup.{ReplyDeviceList, RequestDeviceList}
+import com.mhy.akka.test.DeviceGroup.{ReplyDeviceList, RequestAllTemperatures, RequestDeviceList}
+
+import scala.concurrent.duration.DurationDouble
 
 /**
   * Created by mhy on 2017/6/27.
@@ -32,7 +34,7 @@ class DeviceGroup(groupId : String) extends Actor with ActorLogging{
 
   override def postStop(): Unit = log.info("DeviceGroup {} stoped",groupId)
 
-  override def receive : Receive = {
+  override def receive : Receive = { 
     case trackMsg @ RequestTrackDevice(`groupId`, _) =>
       deviceIdToActor.get(trackMsg.deviceId) match {
         case Some(deviceActor) =>
@@ -52,6 +54,14 @@ class DeviceGroup(groupId : String) extends Actor with ActorLogging{
 
     case RequestDeviceList(requestId) =>
       sender() ! ReplyDeviceList(requestId, deviceIdToActor.keySet)
+
+    case RequestAllTemperatures(requestId) =>
+      context.actorOf(DeviceGroupQuery.props(
+        actorToDeviceId = actorToDeviceId,
+        requestId = requestId,
+        requester = sender(),
+        3.seconds
+      ))
 
     case Terminated(deviceActor) =>
       val deviceId = actorToDeviceId(deviceActor)
